@@ -31,10 +31,10 @@ document.addEventListener('DOMContentLoaded', () => {
     var h = d.getHours();
     var m = d.getMinutes();
     var period = '';
-    var zone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
-    zone = zone.replace(/_/g, ' ');
-    zone = zone.replace(/\//g, ', ');
+    // var zone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    // zone = zone.replace(/_/g, ' ');
+    // zone = zone.replace(/\//g, ', ');
 
     if (h >= 12) {
       h -= 12;
@@ -53,7 +53,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     chat.innerHTML += `<li><span style="font-family:'Russo One',sans-serif;">${
       data.user
-    }</span> <span style="font-size:11px;color:grey;font-family:'Roboto Mono',monospace;" >at ${h}:${m} ${period} (${zone})</span><br /> ${
+    }</span> <span style="font-size:11px;color:grey;font-family:'Roboto Mono',monospace;" >at ${h}:${m} ${period}</span><br /> ${
       data.msg
     }</li><br />`;
     scrollToBottom();
