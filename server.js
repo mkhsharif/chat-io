@@ -33,17 +33,28 @@ io.sockets.on('connection', socket => {
 
   // send message
   socket.on('send message', data => {
-    console.log(data);
     io.sockets.emit('new message', { msg: data, user: socket.username });
   });
 
   // new user
   socket.on('new user', (data, callback) => {
-      console.log('HELLOOOO');
-    callback(true);
+    if (users.length === 0) {
+      callback(true);
+    } else {
+      for (i in users) {
+        console.log(users);
+        if (data === users[i]) {
+          console.log('false');
+          callback(false);
+          return;
+        } else {
+          console.log('true');
+          callback(true);
+        }
+      }
+    }
     socket.username = data;
     users.push(socket.username);
-    console.log(users);
     updateUsernames();
   });
 
