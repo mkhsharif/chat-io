@@ -56,9 +56,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }</span> <span style="font-size:11px;color:grey;font-family:'Roboto Mono',monospace;" >at ${h}:${m} ${period}</span><br /> ${
       data.msg
     }</li><br />`;
+    
     scrollToBottom();
-    console.log('height: ' + messageLog.scrollHeight);
-    console.log('top: ' + messageLog.scrollTop);
   });
 
   userForm.addEventListener('submit', e => {
@@ -91,6 +90,6 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   function scrollToBottom() {
-    // $messageLog.scrollTop = $messageLog.scrollHeight;
+    chat.scrollTop = chat.scrollHeight;
   }
 });
