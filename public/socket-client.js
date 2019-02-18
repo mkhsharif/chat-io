@@ -13,7 +13,19 @@ document.addEventListener('DOMContentLoaded', () => {
   var username = document.getElementById('username');
   var messageLog = document.getElementById('messageLog');
 
+  console.log(message.value);
+  var re = new RegExp(/\s+/g);
+  console.log(message.value.le);
 
+  // submit message enter
+  messageForm.addEventListener('keypress', e => {
+      if(e.keyCode === 13) {
+        socket.emit('send message', message.value);
+        message.value = '';
+      }
+  });
+
+  // submit message button
   messageForm.addEventListener('submit', e => {
     e.preventDefault();
     socket.emit('send message', message.value);
@@ -56,7 +68,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }</span> <span style="font-size:11px;color:grey;font-family:'Roboto Mono',monospace;" >at ${h}:${m} ${period}</span><br /> ${
       data.msg
     }</li><br />`;
-    
+
     scrollToBottom();
   });
 
