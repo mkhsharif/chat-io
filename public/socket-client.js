@@ -1,5 +1,7 @@
 // $(document).ready(function() {  });
 
+var validMessage = false;
+
 document.addEventListener('DOMContentLoaded', () => {
   var socket = io.connect();
 
@@ -13,21 +15,30 @@ document.addEventListener('DOMContentLoaded', () => {
   var username = document.getElementById('username');
   var messageLog = document.getElementById('messageLog');
 
-  console.log(message.value);
-  var re = new RegExp(/\s+/g);
-  console.log(message.value.le);
-
+  setTimeout(() => {
+    console.log(message.value);
+  }, 1000);
   // submit message enter
   messageForm.addEventListener('keypress', e => {
-      if(e.keyCode === 13) {
-        socket.emit('send message', message.value);
-        message.value = '';
-      }
+    // console.log(message.value);
+
+    console.log(message.value.length);
+    validMessage = message.value === '' ? false : true;
+    console.log(message.value);
+
+    if (e.keyCode === 13 && validMessage) {
+      e.preventDefault();
+      socket.emit('send message', message.value);
+      message.value = '';
+    }  else if (e.keyCode === 13) {
+        e.preventDefault();
+    }
   });
 
   // submit message button
   messageForm.addEventListener('submit', e => {
     e.preventDefault();
+    if (!validMessage) return false;
     socket.emit('send message', message.value);
     message.value = '';
   });
