@@ -1,5 +1,6 @@
 // $(document).ready(function() {  });
 
+
 var validMessage = false;
 var publicChat = null;
 var room = '';
@@ -39,23 +40,6 @@ document.addEventListener('DOMContentLoaded', () => {
     go.disabled = false;
  });
 
-
-
-
- if(!publicChat) {
-    console.log(publicChat);
-    room = 'public';
- } else if (publicChat) {
-
- } else {
-
- }
-
-
-
-
-
-
   // submit message enter
   messageForm.addEventListener('keypress', e => {
     // console.log(message.value);
@@ -64,7 +48,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (e.keyCode === 13 && validMessage) {
       e.preventDefault();
-      socket.emit('send message', message.value);
+      socket.emit('send message', message.value, room);
       message.value = '';
     }  else if (e.keyCode === 13) {
         e.preventDefault();
@@ -131,6 +115,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     socket.emit('new user', name, data => {
       if (data) {
+        if(!publicChat) {
+            console.log(publicChat);
+         } else {
+            room = 'public';
+            socket.emit('room', room);
+            console.log('here');
+         }
+        
         userFormArea.style.display = 'none';
         messageArea.style.display = 'flex';
         private.style.display = 'none';
