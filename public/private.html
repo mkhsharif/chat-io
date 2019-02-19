@@ -17,27 +17,13 @@
   </head>
   <body>
     <div class="container">
-      <div id="userFormArea">
-        <div class="">
-          <form id="userForm">
-            <div class="">
-              <label>Enter Username</label>
-              <textarea
-                class=""
-                id="username"
-                maxlength="10"
-                minlength="4"
-              ></textarea>
-              <br />
-              <input type="submit" class="btn" id="go" value="GO" />
-            </div>
-          </form>
+      <div id="modal">
+          <h1>Private Invite</h1>
+          <p>To invite someone to a private chat, share this URL:</p>
+          <input name="" id="" cols="30" rows="0" readonly="readonly" copyable="" value="https://chappio.herokuapp.com/343rfwe"/>
+          <p>The first person to enter this URL will join you.</p>
         </div>
-        <div id="rooms">
-          <input type="button" id="public" value="Public Chat" />
-          <input type="button" id="private" value="Private Chat" />
-        </div>
-      </div>
+      <div id="video"></div>
       <div id="messageArea" class="">
         <div class="online">
           <h3>Online Users</h3>
@@ -65,6 +51,7 @@
           </div>
         </div>
       </div>
+      <div id="video"></div>
     </div>
 
     <!-- socket client -->

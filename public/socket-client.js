@@ -1,8 +1,7 @@
 // $(document).ready(function() {  });
 
-
 var validMessage = false;
-var publicChat = null;
+var isPublic = null;
 var room = '';
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -20,54 +19,90 @@ document.addEventListener('DOMContentLoaded', () => {
   var public = document.getElementById('public');
   var private = document.getElementById('private');
   var go = document.getElementById('go');
+  var modal = document.getElementById('modal');
 
-  go.disabled = true;
+  if (!(window.location.href.indexOf('private') > -1)) {
 
- public.addEventListener('click', () => {
-    publicChat = true;
-    console.log(publicChat);
-    public.classList.add('selected');
-    private.classList.remove('selected');
-    go.disabled = false;
- });
+    go.disabled = true;
 
+    public.addEventListener('click', () => {
+      isPublic = true;
+      console.log(publicChat);
+      public.classList.add('selected');
+      private.classList.remove('selected');
+      go.disabled = false;
+    });
 
- private.addEventListener('click', () => {
-    publicChat = false;
-    console.log(publicChat);
-    private.classList.add('selected');
-    public.classList.remove('selected');
-    go.disabled = false;
- });
+    private.addEventListener('click', () => {
+      isPublic = false;
+      console.log(publicChat);
+      private.classList.add('selected');
+      public.classList.remove('selected');
+      go.disabled = false;
+    });
+
+    username.addEventListener('keypress', e => {
+      if (e.keyCode === 13) {
+        e.preventDefault();
+      }
+
+    });
+
+    userForm.addEventListener('submit', e => {
+      e.preventDefault();
+
+      name = username.value.replace(/\s+/g, '');
+
+      console.log(name);
+      if (name.length < 4) {
+        alert('Username too short!');
+        return;
+      }
+      socket.emit('new user', name, data => {
+        if (data) {
+          if (!isPublic) {
+            //modal.style.display = "block";
+            modal[0].value = 'HELLO';
+          } else {
+            socket.emit('room', isPublic);
+            console.log('here');
+          }
+
+          userFormArea.style.display = 'none';
+          messageArea.style.display = 'flex';
+          private.style.display = 'none';
+        } else {
+          alert('Username is already in use!');
+        }
+      });
+      username.value = '';
+    });
+  } else {
+    messageArea.style.display = 'flex';
+  }
 
   // submit message enter
   messageForm.addEventListener('keypress', e => {
     // console.log(message.value);
 
-    validMessage = (message.value === '') ? false : true;
+    validMessage = message.value === '' ? false : true;
 
     if (e.keyCode === 13 && validMessage) {
       e.preventDefault();
       socket.emit('send message', message.value, room);
       message.value = '';
-    }  else if (e.keyCode === 13) {
-        e.preventDefault();
+    } else if (e.keyCode === 13) {
+      e.preventDefault();
     }
   });
 
   // submit message button
-  messageForm.addEventListener('submit', e => {
-    e.preventDefault();
-    if (!validMessage) return false;
-    socket.emit('send message', message.value, room);
-    message.value = '';
-  });
-
-  username.addEventListener('keypress', e => {
-    if (e.keyCode === 13) {
-      e.preventDefault();
-    }
-  });
+  //   messageForm.addEventListener('submit', e => {
+  //     e.preventDefault();
+  //     if (!validMessage) return false;
+  //     socket.emit('send message', message.value, room);
+  //     message.value = '';
+  //   });
 
   socket.on('new message', data => {
     var d = new Date();
@@ -101,36 +136,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }</li><br />`;
 
     scrollToBottom();
-  });
-
-  userForm.addEventListener('submit', e => {
-    e.preventDefault();
-
-    name = username.value.replace(/\s+/g, '');
-
-    console.log(name);
-    if (name.length < 4) {
-      alert('Username too short!');
-      return;
-    }
-    socket.emit('new user', name, data => {
-      if (data) {
-        if(!publicChat) {
-            console.log(publicChat);
-         } else {
-            room = 'public';
-            socket.emit('room', room);
-            console.log('here');
-         }
-        
-        userFormArea.style.display = 'none';
-        messageArea.style.display = 'flex';
-        private.style.display = 'none';
-      } else {
-        alert('Username is already in use!');
-      }
-    });
-    username.value = '';
   });
 
   socket.on('get users', data => {

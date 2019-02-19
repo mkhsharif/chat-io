@@ -1,6 +1,6 @@
 let express = require('express');
 let app = express();
-let server = require('http').createServer(app);
+let server = require('http').Server(app);
 let io = require('socket.io').listen(server);
 const crypto = require('crypto');
 users = [];
@@ -19,16 +19,28 @@ app.get('/', (req, res) => {
   res.sendFile(__dirname + '/public/index.html');
 });
 
+app.get('/private/:id', (req, res) => {
+    res.sendFile(__dirname + '/public/private.html');
+    //res.send(req.params);
+});
+
+
+
 io.sockets.on('connection', socket => {
   connections.push(socket);
   console.log('Connected: %s sockets connected', connections.length);
-  socket.on('room', room => {
+  socket.on('room', isPublic => {
+      let room = '';
+      if(isPublic) {
+          room = 'public';
+      } else {
+        socket.join(room);
+      }
       socket.join(room);
   });
 
   // disconnect
   socket.on('disconnect', data => {
-    //if (!socket.username) return;
     users.splice(users.indexOf(socket.username), 1);
     updateUsernames();
     connections.splice(connections.indexOf(socket), 1);
@@ -67,3 +79,5 @@ io.sockets.on('connection', socket => {
     io.sockets.emit('get users', users);
   }
 });
+
+
