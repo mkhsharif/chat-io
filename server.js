@@ -21,6 +21,9 @@ app.get('/', (req, res) => {
 io.sockets.on('connection', socket => {
   connections.push(socket);
   console.log('Connected: %s sockets connected', connections.length);
+  socket.on('room', room => {
+      socket.join(room);
+  });
 
   // disconnect
   socket.on('disconnect', data => {
@@ -32,8 +35,9 @@ io.sockets.on('connection', socket => {
   });
 
   // send message
-  socket.on('send message', data => {
-    io.sockets.emit('new message', { msg: data, user: socket.username });
+  socket.on('send message', (data, room) => {
+    io.sockets.in(room).emit('new message', { msg: data, user: socket.username });
+    
   });
 
   // new user

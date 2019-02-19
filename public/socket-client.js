@@ -1,6 +1,8 @@
 // $(document).ready(function() {  });
 
 var validMessage = false;
+var publicChat = null;
+var room = '';
 
 document.addEventListener('DOMContentLoaded', () => {
   var socket = io.connect();
@@ -14,17 +16,51 @@ document.addEventListener('DOMContentLoaded', () => {
   var users = document.getElementById('users');
   var username = document.getElementById('username');
   var messageLog = document.getElementById('messageLog');
+  var public = document.getElementById('public');
+  var private = document.getElementById('private');
+  var go = document.getElementById('go');
 
-  setTimeout(() => {
-    console.log(message.value);
-  }, 1000);
+  go.disabled = true;
+
+ public.addEventListener('click', () => {
+    publicChat = true;
+    console.log(publicChat);
+    public.classList.add('selected');
+    private.classList.remove('selected');
+    go.disabled = false;
+ });
+
+
+ private.addEventListener('click', () => {
+    publicChat = false;
+    console.log(publicChat);
+    private.classList.add('selected');
+    public.classList.remove('selected');
+    go.disabled = false;
+ });
+
+
+
+
+ if(!publicChat) {
+    console.log(publicChat);
+    room = 'public';
+ } else if (publicChat) {
+
+ } else {
+
+ }
+
+
+
+
+
+
   // submit message enter
   messageForm.addEventListener('keypress', e => {
     // console.log(message.value);
 
-    console.log(message.value.length);
-    validMessage = message.value === '' ? false : true;
-    console.log(message.value);
+    validMessage = (message.value === '') ? false : true;
 
     if (e.keyCode === 13 && validMessage) {
       e.preventDefault();
@@ -39,7 +75,7 @@ document.addEventListener('DOMContentLoaded', () => {
   messageForm.addEventListener('submit', e => {
     e.preventDefault();
     if (!validMessage) return false;
-    socket.emit('send message', message.value);
+    socket.emit('send message', message.value, room);
     message.value = '';
   });
 
@@ -97,6 +133,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (data) {
         userFormArea.style.display = 'none';
         messageArea.style.display = 'flex';
+        private.style.display = 'none';
       } else {
         alert('Username is already in use!');
       }
