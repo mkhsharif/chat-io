@@ -2,7 +2,7 @@ let express = require('express');
 let app = express();
 let server = require('http').Server(app);
 let io = require('socket.io').listen(server);
-const crypto = require('crypto');
+let uuidv4 = require('uuid/v4');
 users = [];
 connections = [];
 
@@ -19,24 +19,26 @@ app.get('/', (req, res) => {
   res.sendFile(__dirname + '/public/index.html');
 });
 
-app.get('/private/:id', (req, res) => {
-    res.sendFile(__dirname + '/public/private.html');
-    //res.send(req.params);
-});
 
 
 
 io.sockets.on('connection', socket => {
   connections.push(socket);
+
+  app.get('/private/:id', (req, res) => {
+    res.sendFile(__dirname + '/public/private.html');
+    
+  });
   console.log('Connected: %s sockets connected', connections.length);
   socket.on('room', isPublic => {
-      let room = '';
-      if(isPublic) {
-          room = 'public';
-      } else {
-        socket.join(room);
-      }
-      socket.join(room);
+    let room = '';
+
+    if (isPublic) {
+      room = 'public';
+    } else {
+      room = uuidv4().slice(0, 8);
+    }
+    socket.join(room);
   });
 
   // disconnect
@@ -49,8 +51,9 @@ io.sockets.on('connection', socket => {
 
   // send message
   socket.on('send message', (data, room) => {
-    io.sockets.in(room).emit('new message', { msg: data, user: socket.username });
-    
+    io.sockets
+      .in(room)
+      .emit('new message', { msg: data, user: socket.username });
   });
 
   // new user
@@ -79,5 +82,3 @@ io.sockets.on('connection', socket => {
     io.sockets.emit('get users', users);
   }
 });
-
-
