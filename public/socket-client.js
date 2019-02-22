@@ -20,14 +20,28 @@ document.addEventListener('DOMContentLoaded', () => {
   var private = document.getElementById('private');
   var go = document.getElementById('go');
   var modal = document.getElementById('modal');
+  var link = document.getElementById('link');
+  var copy = document.getElementById('copylink');
+  var cancel = document.getElementById('cancel');
 
-  if (!(window.location.href.indexOf('private') > -1)) {
+  if (window.location.href.indexOf('public') > -1) {
+    modal.style.display = 'none';
+    console.log('public');
 
+    // ^[\p{L}\p{N}]{6,}$
+  } else if (window.location.href.indexOf(/^[a-z0-9]{6,}$/) > -1) {
+    console.log('private');
+
+  } else {
+    // login page
+    console.log('login');
     go.disabled = true;
+    modal.style.display = 'none';
+    messageArea.style.display = 'none';
 
     public.addEventListener('click', () => {
       isPublic = true;
-      console.log(publicChat);
+      console.log(isPublic);
       public.classList.add('selected');
       private.classList.remove('selected');
       go.disabled = false;
@@ -35,7 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     private.addEventListener('click', () => {
       isPublic = false;
-      console.log(publicChat);
+      console.log(isPublic);
       private.classList.add('selected');
       public.classList.remove('selected');
       go.disabled = false;
@@ -45,7 +59,6 @@ document.addEventListener('DOMContentLoaded', () => {
       if (e.keyCode === 13) {
         e.preventDefault();
       }
-
     });
 
     userForm.addEventListener('submit', e => {
@@ -58,44 +71,67 @@ document.addEventListener('DOMContentLoaded', () => {
         alert('Username too short!');
         return;
       }
-      socket.emit('new user', name, data => {
-        if (data) {
-          if (!isPublic) {
-            //modal.style.display = "block";
-            modal[0].value = 'HELLO';
-          } else {
-            socket.emit('room', isPublic);
-            console.log('here');
-          }
-
-          userFormArea.style.display = 'none';
-          messageArea.style.display = 'flex';
-          private.style.display = 'none';
+      socket.emit('new user', name, callback => {
+        if (callback) {
+          console.log('YO');
+          socket.emit('join room', isPublic);
         } else {
           alert('Username is already in use!');
         }
       });
       username.value = '';
     });
-  } else {
-    messageArea.style.display = 'flex';
   }
 
-  // submit message enter
-  messageForm.addEventListener('keypress', e => {
-    // console.log(message.value);
+  cancel.addEventListener('click', () => {
+    console.log('HELLOOOOOOO');
+    //history.replaceState(null, '', `/`);
+    window.open('http://localhost:3000', '_self');
+});
 
-    validMessage = message.value === '' ? false : true;
+copy.addEventListener('click', () => {
+    
+});
 
-    if (e.keyCode === 13 && validMessage) {
-      e.preventDefault();
-      socket.emit('send message', message.value, room);
-      message.value = '';
-    } else if (e.keyCode === 13) {
-      e.preventDefault();
+  socket.on('redirect', room => {
+    console.log('GETS CALLED');
+    console.log(public);
+    let url = '';
+    if (isPublic) {
+      history.pushState(null, '', `/public`);
+    } else {
+      history.pushState(null, '', `/${room}`);
+      modal.style.display = 'block';
+      link.value = `http://chappio.herokuapp.com/${room}`;
     }
+    userFormArea.style.display = 'none';
+    messageArea.style.display = 'flex';
   });
 
+  if (messageArea) {
+    // submit message enter
+    messageForm.addEventListener('keypress', e => {
+      // console.log(message.value);
+
+      validMessage = message.value === '' ? false : true;
+
+      if (e.keyCode === 13 && validMessage) {
+        e.preventDefault();
+        socket.emit('send message', message.value, 'public');
+        message.value = '';
+      } else if (e.keyCode === 13) {
+        e.preventDefault();
+      }
+    });
+  }
+
+  socket.on('get users', data => {
+    var html = '';
+    for (i = 0; i < data.length; i++) {
+      html += `<li>${data[i]}</li>`;
+    }
+    users.innerHTML = html;
+  });
   // submit message button
   //   messageForm.addEventListener('submit', e => {
   //     e.preventDefault();
@@ -136,14 +172,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }</li><br />`;
 
     scrollToBottom();
-  });
-
-  socket.on('get users', data => {
-    var html = '';
-    for (i = 0; i < data.length; i++) {
-      html += `<li>${data[i]}</li>`;
-    }
-    users.innerHTML = html;
   });
 
   function scrollToBottom() {

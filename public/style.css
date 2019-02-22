@@ -26,7 +26,7 @@ body {
 }
 
 #messageArea {
-  display: none;
+  display: flex;
   font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
 }
 
@@ -70,7 +70,7 @@ ul#users li {
 }
 
 #messageArea {
-  display: none;
+  display: flex;
   justify-content: center;
   align-items: center;
   text-align: center;
@@ -224,6 +224,18 @@ input[type='submit']:hover:enabled {
     font-weight: bold;
     left: 440px;
     top: 180px;
+}
+
+#modal button:hover {
+    background: #ccc;
+    text-shadow: 0 1px 0 #fff;
+    color: #848484;
+}
+
+#modal button:active {
+    background: linear-gradient(to bottom,rgba(245,245,245,1) 0%,rgba(240,240,240,1) 100%);
+    text-shadow: 0 1px 0 #fff;
+    color: #848484;
 }
 
 
