@@ -7,72 +7,37 @@ users = [];
 connections = [];
 
 server.listen(process.env.PORT || 3000);
-//pp.use('/', express.static(__dirname + '/public/'));
-
-//app.use("/public/", express.static('main.js'));
 
 app.use(express.static('public', { index: false }));
 
-console.log('server running');
+console.log('server running...');
 
 app.get('/', (req, res) => {
   res.sendFile(__dirname + '/public/index.html');
-  //return res.redirect('http://localhost:3000/private/4343');
 });
 
 app.get('/public', (req, res) => {
   res.redirect('/');
-  //return res.redirect('http://localhost:3000/private/4343');
 });
 
 app.get('/:id', (req, res) => {
-  console.log('RECEIVED');
   res.sendFile(__dirname + '/public/private.html');
   io.sockets.on('connection', socket => {
     try {
       if (io.sockets.adapter.rooms[req.params.id].length === 2) {
-        socket.disconnect(0);
         socket.emit('full room');
       } else {
         connections.push(socket);
         socket.join(req.params.id);
-        //info2();
-        //socket.emit('peer join', { roomId: req.params.id, isFull: false });
-        io.sockets.in(req.params.id).emit('peer join', {roomId: req.params.id, isPublic: false});
+        io.sockets
+          .in(req.params.id)
+          .emit('peer join', { roomId: req.params.id, isPublic: false });
       }
     } catch (error) {
       console.log(error);
     }
-    //console.log(io.sockets.adapter.rooms);
-    //console.log(io.sockets.adapter.rooms[req.params.id].length);
   });
-
-  //info1();
 });
-
-function info1() {
-  let clients = io.sockets.adapter.rooms[req.params.id];
-  let rooms = io.sockets.adapter.rooms;
-  let sockets = io.sockets.sockets;
-  console.log('CLIENTS: ');
-  console.log(clients);
-  console.log('SOCKETS: ');
-  console.log(sockets.username);
-  console.log('ROOMS: ');
-  console.log(rooms);
-}
-
-function info2() {
-  let clients = io.sockets.adapter.rooms['/'];
-  let rooms = io.sockets.adapter.rooms;
-  let sockets = io.sockets.sockets;
-  // console.log('CLIENTS: ');
-  // console.log(clients);
-  // console.log('SOCKETS: ');
-  // console.log(sockets.username);
-  console.log('ROOMS: ');
-  console.log(rooms);
-}
 
 io.sockets.on('connection', socket => {
   connections.push(socket);
@@ -92,7 +57,6 @@ io.sockets.on('connection', socket => {
 
     socket.join(room);
     updateUsernames();
-    info2();
   });
 
   // disconnect
@@ -101,13 +65,10 @@ io.sockets.on('connection', socket => {
     updateUsernames();
     connections.splice(connections.indexOf(socket), 1);
     console.log('Disconnected: %s sockets connected', connections.length);
-    info2();
   });
 
   // send message
   socket.on('send message', (data, room) => {
-    info2();
-    console.log(room);
     io.sockets
       .in(room)
       .emit('new message', { msg: data, user: socket.username });
@@ -119,13 +80,10 @@ io.sockets.on('connection', socket => {
       callback(true);
     } else {
       for (i in users) {
-        console.log(users);
         if (data === users[i]) {
-          console.log('false');
           callback(false);
           return;
         } else {
-          console.log('true');
           callback(true);
         }
       }

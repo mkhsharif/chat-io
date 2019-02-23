@@ -4,11 +4,6 @@ var validMessage = false;
 var isPublic = null;
 var currentRoom = '';
 
-setInterval(() => {
-  console.log('CLIENT ROOM: ' + currentRoom);
-  console.log('isPublic: ' + isPublic);
-}, 5000);
-
 document.addEventListener('DOMContentLoaded', () => {
   var socket = io.connect();
 
@@ -30,7 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
   var cancel = document.getElementById('cancel');
 
   socket.on('peer join', data => {
-    console.log('CALLED CLIENT PEER JOIN');
+    console.log('PEER JOINED');
     modal.style.display = 'none';
     currentRoom = data.roomId;
     isPublic = data.isPublic;
@@ -38,10 +33,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   console.log(currentRoom);
   if (!currentRoom && location.pathname !== '/') {
-    console.log('HERE CURRENT ROOM WAS CALLED');
+    console.log(currentRoom);
   } else if (location.pathname === '/public') {
     modal.style.display = 'none';
-    
   } else if (location.pathname === '/') {
     // login page
     console.log('login');
@@ -77,14 +71,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
       name = username.value.replace(/\s+/g, '');
 
-      console.log(name);
       if (name.length < 4) {
         alert('Username too short!');
         return;
       }
       socket.emit('new user', name, callback => {
         if (callback) {
-          console.log('YO');
           socket.emit('join room', isPublic);
         } else {
           alert('Username is already in use!');
@@ -94,35 +86,21 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  //   if (window.location.href.indexOf('public') > -1) {
-  //     modal.style.display = 'none';
-  //     console.log('public');
-
-  //     // ^[\p{L}\p{N}]{6,}$
-  //   } else if (window.location.href.indexOf(currentRoom) > -1) {
-  //     if (!currentRoom) continue;
-  //     console.log('private');
-  //   } else {
-
-  //   }
+  //  Regex for 6 digit alphanumeric
+  // ^[\p{L}\p{N}]{6,}$
 
   cancel.addEventListener('click', () => {
-    console.log('HELLOOOOOOO');
-    //history.replaceState(null, '', `/`);
-    window.open('http://localhost:3000', '_self');
+    window.open('https://chappio.herokuapp.com/', '_self');
   });
 
   copy.addEventListener('click', () => {});
 
   socket.on('full room', () => {
-    window.open('http://localhost:3000', '_self');
+    console.log('ROOM IS FULL');
   });
 
   socket.on('redirect', room => {
-    console.log('GETS CALLED');
     currentRoom = room;
-    console.log(public);
-    let url = '';
     if (isPublic) {
       history.pushState(null, '', `/public`);
     } else {
@@ -135,10 +113,8 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   if (messageArea) {
-    // submit message enter
+    // submit message with enter key
     messageForm.addEventListener('keypress', e => {
-      // console.log(message.value);
-
       validMessage = message.value === '' ? false : true;
 
       if (e.keyCode === 13 && validMessage) {
@@ -158,23 +134,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     users.innerHTML = html;
   });
-  // submit message button
-  //   messageForm.addEventListener('submit', e => {
-  //     e.preventDefault();
-  //     if (!validMessage) return false;
-  //     socket.emit('send message', message.value, room);
-  //     message.value = '';
-  //   });
 
   socket.on('new message', data => {
     var d = new Date();
     var h = d.getHours();
     var m = d.getMinutes();
     var period = '';
-
-    // var zone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-    // zone = zone.replace(/_/g, ' ');
-    // zone = zone.replace(/\//g, ', ');
 
     if (h >= 12) {
       h -= 12;
