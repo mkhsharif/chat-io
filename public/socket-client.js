@@ -2,7 +2,12 @@
 
 var validMessage = false;
 var isPublic = null;
-var room = '';
+var currentRoom = '';
+
+setInterval(() => {
+  console.log('CLIENT ROOM: ' + currentRoom);
+  console.log('isPublic: ' + isPublic);
+}, 5000);
 
 document.addEventListener('DOMContentLoaded', () => {
   var socket = io.connect();
@@ -24,18 +29,24 @@ document.addEventListener('DOMContentLoaded', () => {
   var copy = document.getElementById('copylink');
   var cancel = document.getElementById('cancel');
 
-  if (window.location.href.indexOf('public') > -1) {
+  socket.on('peer join', data => {
+    console.log('CALLED CLIENT PEER JOIN');
     modal.style.display = 'none';
-    console.log('public');
+    currentRoom = data.roomId;
+    isPublic = data.isPublic;
+  });
 
-    // ^[\p{L}\p{N}]{6,}$
-  } else if (window.location.href.indexOf(/^[a-z0-9]{6,}$/) > -1) {
-    console.log('private');
-
-  } else {
+  console.log(currentRoom);
+  if (!currentRoom && location.pathname !== '/') {
+    console.log('HERE CURRENT ROOM WAS CALLED');
+  } else if (location.pathname === '/public') {
+    modal.style.display = 'none';
+    
+  } else if (location.pathname === '/') {
     // login page
     console.log('login');
     go.disabled = true;
+
     modal.style.display = 'none';
     messageArea.style.display = 'none';
 
@@ -83,18 +94,33 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  //   if (window.location.href.indexOf('public') > -1) {
+  //     modal.style.display = 'none';
+  //     console.log('public');
+
+  //     // ^[\p{L}\p{N}]{6,}$
+  //   } else if (window.location.href.indexOf(currentRoom) > -1) {
+  //     if (!currentRoom) continue;
+  //     console.log('private');
+  //   } else {
+
+  //   }
+
   cancel.addEventListener('click', () => {
     console.log('HELLOOOOOOO');
     //history.replaceState(null, '', `/`);
     window.open('http://localhost:3000', '_self');
-});
+  });
 
-copy.addEventListener('click', () => {
-    
-});
+  copy.addEventListener('click', () => {});
+
+  socket.on('full room', () => {
+    window.open('http://localhost:3000', '_self');
+  });
 
   socket.on('redirect', room => {
     console.log('GETS CALLED');
+    currentRoom = room;
     console.log(public);
     let url = '';
     if (isPublic) {
@@ -117,7 +143,7 @@ copy.addEventListener('click', () => {
 
       if (e.keyCode === 13 && validMessage) {
         e.preventDefault();
-        socket.emit('send message', message.value, 'public');
+        socket.emit('send message', message.value, currentRoom);
         message.value = '';
       } else if (e.keyCode === 13) {
         e.preventDefault();

@@ -20,24 +20,35 @@ app.get('/', (req, res) => {
   //return res.redirect('http://localhost:3000/private/4343');
 });
 
-
 app.get('/public', (req, res) => {
-    res.redirect('/');
-    //return res.redirect('http://localhost:3000/private/4343');
-  });
+  res.redirect('/');
+  //return res.redirect('http://localhost:3000/private/4343');
+});
 
 app.get('/:id', (req, res) => {
-    console.log('RECEIVED');
-    res.sendFile(__dirname + '/public/private.html');
-    io.sockets.on('connection', socket => {
+  console.log('RECEIVED');
+  res.sendFile(__dirname + '/public/private.html');
+  io.sockets.on('connection', socket => {
+    try {
+      if (io.sockets.adapter.rooms[req.params.id].length === 2) {
+        socket.disconnect(0);
+        socket.emit('full room');
+      } else {
         connections.push(socket);
         socket.join(req.params.id);
-        info2();
-        socket.emit('peer join');
-    });
-
-    //info1();
+        //info2();
+        //socket.emit('peer join', { roomId: req.params.id, isFull: false });
+        io.sockets.in(req.params.id).emit('peer join', {roomId: req.params.id, isPublic: false});
+      }
+    } catch (error) {
+      console.log(error);
+    }
+    //console.log(io.sockets.adapter.rooms);
+    //console.log(io.sockets.adapter.rooms[req.params.id].length);
   });
+
+  //info1();
+});
 
 function info1() {
   let clients = io.sockets.adapter.rooms[req.params.id];
@@ -52,26 +63,23 @@ function info1() {
 }
 
 function info2() {
-   let clients = io.sockets.adapter.rooms['/'];
-    let rooms = io.sockets.adapter.rooms;
-    let sockets = io.sockets.sockets;
-    // console.log('CLIENTS: ');
-    // console.log(clients);
-    // console.log('SOCKETS: ');
-    // console.log(sockets.username);
-    console.log('ROOMS: ');
-    console.log(rooms);
-  }
-
-
+  let clients = io.sockets.adapter.rooms['/'];
+  let rooms = io.sockets.adapter.rooms;
+  let sockets = io.sockets.sockets;
+  // console.log('CLIENTS: ');
+  // console.log(clients);
+  // console.log('SOCKETS: ');
+  // console.log(sockets.username);
+  console.log('ROOMS: ');
+  console.log(rooms);
+}
 
 io.sockets.on('connection', socket => {
   connections.push(socket);
 
-
   console.log('Connected: %s sockets connected', connections.length);
   socket.on('join room', isPublic => {
-      console.log('isPUBLIC: ' + isPublic);
+    console.log('isPUBLIC: ' + isPublic);
     let room = '';
 
     if (isPublic) {
