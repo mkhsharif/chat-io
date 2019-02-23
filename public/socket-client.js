@@ -96,6 +96,7 @@ document.addEventListener('DOMContentLoaded', () => {
   copy.addEventListener('click', () => {
       link.select();
       document.execCommand('copy');
+      copy.innerHTML = '<i class="fas fa-check"></i>';
   });
 
   socket.on('full room', () => {
