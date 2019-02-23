@@ -93,7 +93,10 @@ document.addEventListener('DOMContentLoaded', () => {
     window.open('https://chappio.herokuapp.com/', '_self');
   });
 
-  copy.addEventListener('click', () => {});
+  copy.addEventListener('click', () => {
+      link.select();
+      document.execCommand('copy');
+  });
 
   socket.on('full room', () => {
     console.log('ROOM IS FULL');
