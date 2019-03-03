@@ -142,13 +142,24 @@ input[type='submit']:hover:enabled {
   outline-color: #017bff;
 }
 
-#videoElement {
-  width: 500px;
-  height: 375px;
+#video {
+  width: 400px;
+  height: 275px;
   background-color: #666;
+  top: 500px;
+  left: 0px;
+  display: none;
 }
 
-#modal {
+.chatArea {
+  display: flex;
+}
+
+#video p {
+  margin: -30px;
+}
+
+.modal {
   position: fixed; /* Sit on top of the page content */
   display: block; /* Hidden by default */
   height: 320px;
@@ -165,11 +176,11 @@ input[type='submit']:hover:enabled {
   cursor: pointer; /* Add a pointer on hover */
 }
 
-#modal input[type="text"] {
+.modal input[type='text'] {
   height: 50px;
   width: 400px;
   margin-left: 30px;
-  margin-top: 30px; 
+  margin-top: 30px;
   padding: 5px 0px 8px 0px;
   display: block;
   border: 2px solid gray;
@@ -182,62 +193,116 @@ input[type='submit']:hover:enabled {
   resize: none;
 }
 
-#modal p {
-    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
-    font-size: 15px;
-    text-align: center;
+.modal p {
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  font-size: 15px;
+  text-align: center;
 }
 
-#modal h1 {
-    font-family: 'Roboto Mono',monospace;
-    text-align: center;
-    margin-top: 40px;
-    margin-bottom: 40px;
+.modal h1 {
+  font-family: 'Roboto Mono', monospace;
+  text-align: center;
+  margin-top: 40px;
+  margin-bottom: 40px;
 }
 
-#cancel {
-    position: absolute;
-    left: 50%;
-    width: 80px;
-    height: 30px;
-    margin-left: -40px; 
-    padding: 6px 11px;
-    white-space: nowrap;
-    text-decoration: none!important;
-    background-color: #e9e9e9;
-    border: 1px solid #e2e2e2;
-    border-radius: 2px;
-    font-family: 'Roboto Mono',monospace;
-    font-weight: bold;
+
+
+.cancel {
+  position: absolute;
+  left: 50%;
+  width: 80px;
+  height: 30px;
+  margin-left: -40px;
+  padding: 6px 11px;
+  white-space: nowrap;
+  text-decoration: none !important;
+  background-color: #e9e9e9;
+  border: 1px solid #e2e2e2;
+  border-radius: 2px;
+  font-family: 'Roboto Mono', monospace;
+  font-weight: bold;
 }
 
 #copylink {
-    position: absolute; 
-    width: 30px;
-    height: 30px;
-    white-space: nowrap;
-    text-decoration: none!important;
-    background-color: #e9e9e9;
-    border: 2px solid #e2e2e2;
-    border-radius: 2px;
-    font-family: 'Roboto Mono',monospace;
-    font-weight: bold;
-    left: 440px;
-    top: 180px;
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  white-space: nowrap;
+  text-decoration: none !important;
+  background-color: #e9e9e9;
+  border: 2px solid #e2e2e2;
+  border-radius: 2px;
+  font-family: 'Roboto Mono', monospace;
+  font-weight: bold;
+  left: 440px;
+  top: 180px;
 }
 
-#modal button:hover {
-    background: #ccc;
-    text-shadow: 0 1px 0 #fff;
-    color: #848484;
+.modal button:hover {
+  background: #ccc;
+  text-shadow: 0 1px 0 #fff;
+  color: #848484;
 }
 
-#modal button:active {
-    background: linear-gradient(to bottom,rgba(245,245,245,1) 0%,rgba(240,240,240,1) 100%);
-    text-shadow: 0 1px 0 #fff;
-    color: #848484;
+.modal button:active {
+  background: linear-gradient(
+    to bottom,
+    rgba(245, 245, 245, 1) 0%,
+    rgba(240, 240, 240, 1) 100%
+  );
+  text-shadow: 0 1px 0 #fff;
+  color: #848484;
 }
 
+
+#prompt {
+  position: fixed; /* Sit on top of the page content */
+  display: block; /* Hidden by default */
+  height: 240px;
+  width: 400px;
+  margin-left: -200px;
+  margin-top: -160px;
+  top: 50%;
+  left: 50%;
+  right: 50%;
+  bottom: 50%;
+  background-color: whitesmoke; /* Black background with opacity */
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  z-index: 2; /* Specify a stack order in case you're using a different order for other elements */
+  cursor: pointer; /* Add a pointer on hover */
+}
+
+#prompt input[type='text'] {
+  height: 50px;
+  width: 200px;
+  margin-left: 100px;
+  margin-top: -20px;
+  margin-bottom: 20px;
+  padding: 5px 0px 8px 0px;
+  display: block;
+  border: 2px solid gray;
+  border-radius: 0px;
+  box-sizing: border-box;
+  text-align: left;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 20px;
+  text-align: center;
+  resize: none;
+}
+
+#prompt p {
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  font-size: 15px;
+  text-align: center;
+}
+
+#prompt h1 {
+  font-family: 'Roboto Mono', monospace;
+  text-align: center;
+  margin-top: 40px;
+  margin-bottom: 40px;
+}
 
 /* .online {
 } */

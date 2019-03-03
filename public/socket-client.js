@@ -27,9 +27,13 @@ document.addEventListener('DOMContentLoaded', () => {
   socket.on('peer join', data => {
     console.log('PEER JOINED');
     modal.style.display = 'none';
+    userFormArea.style.display = 'none';
+    messageArea.style.display = 'flex';
     currentRoom = data.roomId;
     isPublic = data.isPublic;
   });
+
+  socket.on('prompt username')
 
   console.log(currentRoom);
   if (!currentRoom && location.pathname !== '/') {
@@ -128,6 +132,14 @@ document.addEventListener('DOMContentLoaded', () => {
       } else if (e.keyCode === 13) {
         e.preventDefault();
       }
+    });
+
+    // submit message button
+    messageForm.addEventListener('submit', e => {
+      e.preventDefault();
+      if (!validMessage) return false;
+      socket.emit('send message', message.value, currentRoom);
+      message.value = '';
     });
   }
 

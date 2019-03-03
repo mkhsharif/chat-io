@@ -2,9 +2,12 @@ let express = require('express');
 let app = express();
 let server = require('http').createServer(app);
 let io = require('socket.io').listen(server);
+//let p2p = require('socket.io-p2p-server').Server;
 let uuidv4 = require('uuid/v4');
 users = [];
 connections = [];
+
+//io.use(p2p);
 
 server.listen(process.env.PORT || 3000);
 
@@ -21,7 +24,7 @@ app.get('/public', (req, res) => {
 });
 
 app.get('/:id', (req, res) => {
-  res.sendFile(__dirname + '/public/private.html');
+  res.sendFile(__dirname + '/public/index.html');
   io.sockets.on('connection', socket => {
     try {
       if (io.sockets.adapter.rooms[req.params.id].length === 2) {
@@ -29,6 +32,7 @@ app.get('/:id', (req, res) => {
       } else {
         connections.push(socket);
         socket.join(req.params.id);
+        socket.emit('prompt user name');
         io.sockets
           .in(req.params.id)
           .emit('peer join', { roomId: req.params.id, isPublic: false });

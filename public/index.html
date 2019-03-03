@@ -2,6 +2,7 @@
 <html>
   <head>
     <title>CHAT IO</title>
+    <script src='https://cdn.scaledrone.com/scaledrone.min.js'></script>
     <!-- Required meta tags -->
     <meta charset="utf-8" />
     <meta
@@ -23,7 +24,7 @@
   </head>
   <body>
     <div class="container">
-      <div id="modal">
+      <div class="modal" id="modal">
         <h1>Private Invite</h1>
         <p>To invite someone to private chat, share this URL:</p>
         <div style="">
@@ -40,9 +41,15 @@
           <button id="copylink"><i class="fas fa-link"></i></button>
         </div>
         <p>The first person to enter this URL will join you.</p>
-        <button id="cancel"><i class="fas fa-times"></i> Cancel</button>
+        <button class="cancel" id="cancel"><i class="fas fa-times"></i> Cancel</button>
       </div>
-      <div id="video"></div>
+      <div id="prompt">
+        <h1>Enter Username</h1>
+        <div style="">
+         <input type="text" id=""/>
+        </div>
+        <button class="cancel" id="cancel"><i class="fas fa-caret-right"></i> Join</button>
+      </div>
       <div id="userFormArea">
         <div class="">
           <form id="userForm">
@@ -64,6 +71,7 @@
           <input type="button" id="private" value="Private Chat" />
         </div>
       </div>
+      <div id="video1"></div>
       <div id="messageArea" class="">
         <div class="online">
           <h3>Online Users</h3>
@@ -72,7 +80,8 @@
           </div>
         </div>
 
-        <div class="">
+        <div class="chatArea">
+          <div id="video"><p>Username</p></div>
           <div class="" id="">
             <nav id="messageLog">
               <ul id="chat"></ul>
@@ -81,14 +90,15 @@
               <div class="">
                 <textarea class="" id="message"> </textarea>
                 <br />
-                <!-- <input
+                <input
                     type="submit"
                     class=""
                     value="SEND"
-                  /> -->
+                  />
               </div>
             </form>
           </div>
+          <div id="video"><p>Username</p></div>
         </div>
       </div>
     </div>
