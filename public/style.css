@@ -258,11 +258,11 @@ input[type='submit']:hover:enabled {
 
 #prompt {
   position: fixed; /* Sit on top of the page content */
-  display: block; /* Hidden by default */
+  display: none; /* Hidden by default */
   height: 240px;
   width: 400px;
   margin-left: -200px;
-  margin-top: -160px;
+  margin-top: -100px;
   top: 50%;
   left: 50%;
   right: 50%;
@@ -273,7 +273,7 @@ input[type='submit']:hover:enabled {
   cursor: pointer; /* Add a pointer on hover */
 }
 
-#prompt input[type='text'] {
+#prompt textarea{
   height: 50px;
   width: 200px;
   margin-left: 100px;

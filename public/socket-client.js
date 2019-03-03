@@ -23,6 +23,9 @@ document.addEventListener('DOMContentLoaded', () => {
   var link = document.getElementById('link');
   var copy = document.getElementById('copylink');
   var cancel = document.getElementById('cancel');
+  var prompt = document.getElementById('prompt');
+  var userprompt = document.getElementById('userprompt'); // username of prompt
+  var join = document.getElementById('join');
 
   socket.on('peer join', data => {
     console.log('PEER JOINED');
@@ -33,7 +36,27 @@ document.addEventListener('DOMContentLoaded', () => {
     isPublic = data.isPublic;
   });
 
-  socket.on('prompt username')
+  socket.on('prompt username', () => {
+    prompt.style.display = 'block';
+
+    join.addEventListener('click', e => {
+      name = userprompt.value.replace(/\s+/g, '');
+
+      if (name.length < 4) {
+        alert('Username too short!');
+        return;
+      }
+      socket.emit('new user', name, callback => {
+        if (callback) {
+         prompt.style.display = 'none';
+        } else {
+          alert('Username is already in use!');
+        }
+      });
+      username.value = '';
+
+    });
+  });
 
   console.log(currentRoom);
   if (!currentRoom && location.pathname !== '/') {
@@ -98,9 +121,9 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   copy.addEventListener('click', () => {
-      link.select();
-      document.execCommand('copy');
-      copy.innerHTML = '<i class="fas fa-check"></i>';
+    link.select();
+    document.execCommand('copy');
+    copy.innerHTML = '<i class="fas fa-check"></i>';
   });
 
   socket.on('full room', () => {

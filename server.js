@@ -32,10 +32,11 @@ app.get('/:id', (req, res) => {
       } else {
         connections.push(socket);
         socket.join(req.params.id);
-        socket.emit('prompt user name');
         io.sockets
           .in(req.params.id)
           .emit('peer join', { roomId: req.params.id, isPublic: false });
+        
+          socket.emit('prompt username');
       }
     } catch (error) {
       console.log(error);
